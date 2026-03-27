@@ -119,3 +119,10 @@ chmod +x monitor-config.sh
 ./monitor-config.sh
 # Open config/app-config.json in another window and modify it.
 ```
+
+---
+
+## Runtime Behavior & Safety
+
+- **Config defaults & validation:** The service reads `config/app-config.json` but will automatically fall back to safe defaults (`debounceIntervalMs = 5000`, `maxBatchSize = 100`, `targetCollection = "users"`) if the file is missing or invalid.
+- **Graceful shutdown:** On process signals (e.g. `CTRL+C`), the server closes the MongoDB Change Stream, disconnects from MongoDB, and then stops the HTTP server to avoid dangling connections.

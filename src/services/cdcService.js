@@ -9,13 +9,13 @@ function setupCDC() {
   
   try {
     const collection = db.collection(targetCollectionName);
-    
+
     // Create Change Stream
     // Note: This requires MongoDB to be running as a Replica Set
     console.log(`[CDC Service] Setting up Change Stream on collection: >${targetCollectionName}<`);
-    
-    const changeStream = collection.watch([], { fullDocument: 'updateLookup' });
-    
+
+    const changeStream = collection.watch([], { fullDocument: "updateLookup" });
+
     changeStream.on("change", (changeEvent) => {
       console.log(`[CDC Event] Received '${changeEvent.operationType}' event from MongoDB.`);
       // Send event to Debounce Service for batching
@@ -36,10 +36,25 @@ function setupCDC() {
       }
     });
 
-    console.log(`[CDC Service] Successfully listening for changes on '${targetCollectionName}'...`);
+    changeStream.on("close", () => {
+      console.warn("[CDC Service] Change Stream closed.");
+    });
+
+    console.log(
+      `[CDC Service] Change Stream initialized for '${targetCollectionName}'.`
+    );
+    return changeStream;
   } catch (err) {
     console.error("Failed to setup CDC Change Stream:", err.message);
+    return null;
   }
 }
 
-module.exports = { setupCDC };
+async function closeCDC(changeStream) {
+  if (changeStream) {
+    await changeStream.close();
+    console.log("[CDC Service] Change Stream closed cleanly.");
+  }
+}
+
+module.exports = { setupCDC, closeCDC };

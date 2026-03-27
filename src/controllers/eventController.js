@@ -17,11 +17,9 @@ const getStatus = (req, res) => {
 // Retrieve the most recently processed batches
 const getRecentBatches = (req, res) => {
   try {
-    const status = debounceService.getStatus();
-    // Expose the last 10 batches
     res.json({
       success: true,
-      data: debounceService.processedBatches
+      data: debounceService.getRecentBatches()
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
