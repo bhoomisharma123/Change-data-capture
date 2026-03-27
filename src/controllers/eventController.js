@@ -7,11 +7,16 @@ const getStatus = (req, res) => {
         return res.json({
             success: true,
             message: "CDC System Status",
-            data: status
+            data: status,
+            timestamp: new Date()
         });
     } catch (error) {
         console.error("Error in getStatus:", error);
-        return res.status(500).json({ success: false, error: error.message });
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message,
+            timestamp: new Date()
+        });
     }
 };
 
@@ -20,11 +25,16 @@ const getRecentBatches = (req, res) => {
     try {
         return res.json({
             success: true,
-            data: debounceService.getRecentBatches()
+            data: debounceService.getRecentBatches(),
+            timestamp: new Date()
         });
     } catch (error) {
         console.error("Error in getRecentBatches:", error);
-        return res.status(500).json({ success: false, error: error.message });
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message,
+            timestamp: new Date()
+        });
     }
 };
 
@@ -36,7 +46,8 @@ const simulateEvent = (req, res) => {
         if (!operationType || !targetCollection || !documentId) {
             return res.status(400).json({
                 success: false,
-                error: "Missing required fields: operationType, targetCollection, documentId"
+                error: "Missing required fields: operationType, targetCollection, documentId",
+                timestamp: new Date()
             });
         }
 
@@ -53,11 +64,16 @@ const simulateEvent = (req, res) => {
         return res.json({
             success: true,
             message: "Mock CDC event added to debounce buffer.",
-            event: mockEvent
+            event: mockEvent,
+            timestamp: new Date()
         });
     } catch (error) {
         console.error("Error in simulateEvent:", error);
-        return res.status(500).json({ success: false, error: error.message });
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message,
+            timestamp: new Date()
+        });
     }
 };
 
