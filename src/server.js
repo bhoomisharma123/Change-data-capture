@@ -1,11 +1,15 @@
 require("dotenv").config();
 const express = require("express");
-const { connectDB } = require("./config/database");
+const path = require("path");
+const { connectDB, getClient } = require("./config/database");
 const { setupCDC } = require("./services/cdcService");
 const apiRoutes = require("./routes/api");
 
 const app = express();
 app.use(express.json());
+
+// Serve static UI assets
+app.use(express.static(path.join(__dirname, "../public")));
 
 // API Routes
 app.use("/api", apiRoutes);
@@ -22,9 +26,25 @@ async function startServer() {
     setupCDC();
 
     // 3. Start Express server
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
+
+    // 4. Graceful Shutdown handlers
+    const shutdown = async () => {
+      console.log("\n[Server] Shutting down gracefully...");
+      server.close();
+      const client = getClient();
+      if (client) {
+        await client.close();
+        console.log("[MongoDB] Connection closed.");
+      }
+      process.exit(0);
+    };
+
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1);

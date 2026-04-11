@@ -29,7 +29,7 @@ class DebounceService {
 
   addEvent(event) {
     this.eventBuffer.push({
-      eventId: event._id._data,
+      eventId: event._id ? (event._id._data || "unknown") : "unknown",
       operationType: event.operationType,
       ns: event.ns,
       documentKey: event.documentKey,

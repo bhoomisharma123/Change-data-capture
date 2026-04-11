@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDC Dashboard</title>
+    <!-- Modern Typography: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glow-bg glow-1"></div>
+    <div class="glow-bg glow-2"></div>
+
+    <div class="dashboard-container">
+        <header class="glass-panel header">
+            <h1>CDC <span class="accent-text">Real-Time Monitor</span></h1>
+            <div class="header-actions">
+                <button id="btn-reload-config" class="btn primary-btn">
+                    <span class="icon">↻</span> Reload Config
+                </button>
+                <button id="btn-simulate" class="btn secondary-btn">
+                    <span class="icon">🚀</span> Simulate Event
+                </button>
+            </div>
+        </header>
+
+        <section class="status-grid">
+            <div class="glass-panel status-card">
+                <h3>Buffer Size</h3>
+                <div class="metric highlight" id="metric-buffer">0</div>
+                <div class="subtitle">Events waiting to process</div>
+            </div>
+
+            <div class="glass-panel status-card">
+                <h3>Timer Active</h3>
+                <div class="metric" id="metric-timer">No</div>
+                <div class="subtitle">Debounce state</div>
+            </div>
+
+            <div class="glass-panel status-card">
+                <h3>Batches Processed</h3>
+                <div class="metric" id="metric-batches">0</div>
+                <div class="subtitle">Total recent batches</div>
+            </div>
+
+            <div class="glass-panel config-card">
+                <h3>Current Config</h3>
+                <div class="config-item">
+                    <span class="label">Debounce:</span>
+                    <span class="value" id="config-debounce">0ms</span>
+                </div>
+                <div class="config-item">
+                    <span class="label">Max Batch Size:</span>
+                    <span class="value" id="config-batch-size">0</span>
+                </div>
+            </div>
+        </section>
+
+        <main class="main-content glass-panel">
+            <div class="main-header">
+                <h2>Recent Processing Activity</h2>
+                <div class="pulse-indicator">
+                    <div class="pulse-dot"></div>
+                    <span>Live</span>
+                </div>
+            </div>
+            
+            <div class="batches-container" id="batches-container">
+                <!-- Batches will be injected here via JS -->
+                <div class="empty-state">Waiting for CDC events...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JS -->
+    <script src="app.js"></script>
+</body>
+</html>

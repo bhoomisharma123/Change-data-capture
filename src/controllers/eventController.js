@@ -28,6 +28,21 @@ const getRecentBatches = (req, res) => {
   }
 };
 
+// Reload the debouncing configuration from app-config.json
+const reloadConfig = (req, res) => {
+  try {
+    debounceService.reloadConfig();
+    const status = debounceService.getStatus();
+    res.json({
+      success: true,
+      message: "Configuration reloaded successfully.",
+      config: status.config
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 // Endpoint to manually simulate a CDC event (for testing without MongoDB if needed)
 const simulateEvent = (req, res) => {
   try {
@@ -63,5 +78,6 @@ const simulateEvent = (req, res) => {
 module.exports = {
   getStatus,
   getRecentBatches,
-  simulateEvent
+  simulateEvent,
+  reloadConfig
 };

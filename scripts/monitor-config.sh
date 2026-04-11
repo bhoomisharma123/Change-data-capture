@@ -28,8 +28,9 @@ while read -r directory events filename; do
     echo "Fetching update at $(date)"
     
     # Normally, you would trigger the application reload here (e.g., via a SIGUSR1 or a Webhook)
-    echo "Simulating application config reload webhook..."
+    echo "Triggering application config reload webhook..."
     
-    # E.g., curl -X POST http://localhost:3000/api/reload-config
+    curl -X POST http://localhost:3000/api/reload-config
+    echo ""
     echo "========================================"
 done
