@@ -1,9 +1,9 @@
+<!-- # Change Data Capture (CDC) System -->
 # Change Data Capture (CDC) System
-
 This project is a Complete Change Data Capture (CDC) system built using MongoDB, Node.js, Express, and Shell scripts. It automatically detects database changes (insert, update, delete) and processes them asynchronously using a debouncing mechanism to reduce load.
 
+<!-- ## Features -->
 ## Features
-
 - **MongoDB Change Streams:** Captures real-time changes directly from the database oplog / replica set.
 - **Node.js Asynchronous Pipeline:** Processes events efficiently without blocking the main event loop.
 - **Debouncing Mechanism:** Batches rapid succession events to minimize system and downstream service load.
@@ -119,3 +119,10 @@ chmod +x monitor-config.sh
 ./monitor-config.sh
 # Open config/app-config.json in another window and modify it.
 ```
+
+---
+
+## Runtime Behavior & Safety
+
+- **Config defaults & validation:** The service reads `config/app-config.json` but will automatically fall back to safe defaults (`debounceIntervalMs = 5000`, `maxBatchSize = 100`, `targetCollection = "users"`) if the file is missing or invalid.
+- **Graceful shutdown:** On process signals (e.g. `CTRL+C`), the server closes the MongoDB Change Stream, disconnects from MongoDB, and then stops the HTTP server to avoid dangling connections.

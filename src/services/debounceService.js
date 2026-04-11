@@ -3,7 +3,47 @@ const path = require("path");
 
 // Load configuration logic
 const configPath = path.join(__dirname, "../../config/app-config.json");
-let appConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+const defaultConfig = {
+  debounceIntervalMs: 5000,
+  targetCollection: "users",
+  maxBatchSize: 100
+};
+
+function sanitizeConfig(rawConfig = {}) {
+  const debounceIntervalMs = Number(rawConfig.debounceIntervalMs);
+  const maxBatchSize = Number(rawConfig.maxBatchSize);
+  const targetCollection = rawConfig.targetCollection;
+
+  return {
+    debounceIntervalMs:
+      Number.isInteger(debounceIntervalMs) && debounceIntervalMs > 0
+        ? debounceIntervalMs
+        : defaultConfig.debounceIntervalMs,
+    maxBatchSize:
+      Number.isInteger(maxBatchSize) && maxBatchSize > 0
+        ? maxBatchSize
+        : defaultConfig.maxBatchSize,
+    targetCollection:
+      typeof targetCollection === "string" && targetCollection.trim()
+        ? targetCollection.trim()
+        : defaultConfig.targetCollection
+  };
+}
+
+function loadConfigFromDisk() {
+  try {
+    const fileData = fs.readFileSync(configPath, "utf-8");
+    return sanitizeConfig(JSON.parse(fileData));
+  } catch (error) {
+    console.warn(
+      "[DebounceService] Failed to load app config. Falling back to defaults:",
+      error.message
+    );
+    return { ...defaultConfig };
+  }
+}
+
+let appConfig = loadConfigFromDisk();
 
 // Simulated Debounce mechanism
 class DebounceService {
@@ -16,8 +56,8 @@ class DebounceService {
   // Reload config (simulated for inotify)
   reloadConfig() {
     try {
-      appConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-      console.log("✅ Configuration reloaded automatically:", appConfig);
+      appConfig = loadConfigFromDisk();
+      console.log("Configuration reloaded automatically:", appConfig);
     } catch (e) {
       console.error("Failed to reload config", e);
     }
@@ -93,6 +133,10 @@ class DebounceService {
       config: this.getConfig(),
       recentBatches: this.processedBatches.length
     };
+  }
+
+  getRecentBatches() {
+    return [...this.processedBatches];
   }
 }
 

@@ -24,4 +24,12 @@ function getClient() {
   return client;
 }
 
-module.exports = { connectDB, getDB, getClient };
+async function closeDB() {
+  if (client) {
+    await client.close();
+    client = null;
+    db = null;
+  }
+}
+
+module.exports = { connectDB, getDB, getClient, closeDB };
